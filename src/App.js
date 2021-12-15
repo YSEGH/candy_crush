@@ -6,6 +6,8 @@ const color = ["red", "green", "yellow", "blue", "violet", "pink"];
 
 function App() {
   const [currentColorsBoard, setCurrentColorsBoard] = useState([]);
+  const [cellDragged, setCellDragged] = useState(null);
+  const [cellReplaced, setCellReplaced] = useState(null);
 
   const createBoard = () => {
     const colorArray = [];
@@ -17,25 +19,27 @@ function App() {
   };
 
   const checkColumnOfThree = () => {
-    for (let i = 0; i < 47; i++) {
+    for (let i = 0; i <= 47; i++) {
       const columnThree = [i, i + width, i + width * 2];
       const cellColor = currentColorsBoard[i];
       if (
         columnThree.every((square) => currentColorsBoard[square] === cellColor)
       ) {
         columnThree.forEach((square) => (currentColorsBoard[square] = ""));
+        return true;
       }
     }
   };
 
   const checkColumnOfFour = () => {
-    for (let i = 0; i < 39; i++) {
+    for (let i = 0; i <= 39; i++) {
       const columnFour = [i, i + width, i + width * 2, i + width * 3];
       const cellColor = currentColorsBoard[i];
       if (
         columnFour.every((square) => currentColorsBoard[square] === cellColor)
       ) {
         columnFour.forEach((square) => (currentColorsBoard[square] = ""));
+        return true;
       }
     }
   };
@@ -52,6 +56,7 @@ function App() {
           rowThree.every((square) => currentColorsBoard[square] === cellColor)
         ) {
           rowThree.forEach((square) => (currentColorsBoard[square] = ""));
+          return true;
         }
       }
     }
@@ -70,16 +75,63 @@ function App() {
           rowFour.every((square) => currentColorsBoard[square] === cellColor)
         ) {
           rowFour.forEach((square) => (currentColorsBoard[square] = ""));
+          return true;
         }
       }
     }
   };
 
   const moveDownCell = () => {
+    const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
     for (let i = 0; i < 64 - width; i++) {
+      if (firstRow.includes(i) && currentColorsBoard[i] === "") {
+        currentColorsBoard[i] = color[Math.floor(Math.random() * color.length)];
+      }
+
       if (currentColorsBoard[i + width] === "") {
         currentColorsBoard[i + width] = currentColorsBoard[i];
         currentColorsBoard[i] = "";
+      }
+    }
+  };
+
+  const onDragStartHandler = (target) => {
+    setCellDragged(target);
+  };
+  const onDropHandler = (target) => {
+    setCellReplaced(target);
+  };
+  const onDragEndHandler = () => {
+    const cellDraggedId = parseInt(cellDragged.getAttribute("data-id"));
+    const cellReplacedId = parseInt(cellReplaced.getAttribute("data-id"));
+
+    const validMove = [
+      cellDraggedId + width,
+      cellDraggedId - width,
+      cellDraggedId + 1,
+      cellDraggedId - 1,
+    ];
+
+    const isValidMove = validMove.includes(cellReplacedId);
+
+    if (isValidMove) {
+      currentColorsBoard[cellDraggedId] = cellReplaced.style.backgroundColor;
+      currentColorsBoard[cellReplacedId] = cellDragged.style.backgroundColor;
+
+      const isColumnOfFour = checkColumnOfFour();
+      const isColumnOfThree = checkColumnOfThree();
+      const isRowOfFour = checkRowOfFour();
+      const isRowOfThree = checkRowOfThree();
+
+      console.log(isColumnOfFour, isColumnOfThree, isRowOfFour, isRowOfThree);
+
+      if (isColumnOfThree || isColumnOfFour || isRowOfThree || isRowOfFour) {
+        setCellDragged(null);
+        setCellReplaced(null);
+      } else {
+        currentColorsBoard[cellReplacedId] = cellReplaced.style.backgroundColor;
+        currentColorsBoard[cellDraggedId] = cellDragged.style.backgroundColor;
+        setCurrentColorsBoard([...currentColorsBoard]);
       }
     }
   };
@@ -91,13 +143,13 @@ function App() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      checkColumnOfThree();
       checkColumnOfFour();
-      checkRowOfThree();
+      checkColumnOfThree();
       checkRowOfFour();
+      checkRowOfThree();
       moveDownCell();
       setCurrentColorsBoard([...currentColorsBoard]);
-    }, 500);
+    }, 100);
     return () => clearInterval(timer);
   }, [checkColumnOfThree, checkColumnOfFour, checkRowOfThree, checkRowOfFour]);
 
@@ -108,8 +160,15 @@ function App() {
           <div
             key={i}
             className="cell"
-            style={{ backgroundColor: cellColor }}
+            style={{ backgroundColor: cellColor, cursor: "pointer" }}
             data-id={i}
+            draggable={true}
+            onDragStart={(e) => onDragStartHandler(e.target)}
+            onDragOver={(e) => e.preventDefault()}
+            onDragEnter={(e) => e.preventDefault()}
+            onDragLeave={(e) => e.preventDefault()}
+            onDrop={(e) => onDropHandler(e.target)}
+            onDragEnd={(e) => onDragEndHandler(e.target)}
           ></div>
         ))}
       </div>
