@@ -25,10 +25,8 @@ function App() {
       const columnThree = [i, i + width, i + width * 2];
       const cellColor = currentColorsBoard[i];
       if (
-        columnThree.every(
-          (square) =>
-            currentColorsBoard[square] === cellColor && cellColor !== ""
-        )
+        cellColor &&
+        columnThree.every((square) => currentColorsBoard[square] === cellColor)
       ) {
         setScore((score) => score + 3);
 
@@ -43,10 +41,8 @@ function App() {
       const columnFour = [i, i + width, i + width * 2, i + width * 3];
       const cellColor = currentColorsBoard[i];
       if (
-        columnFour.every(
-          (square) =>
-            currentColorsBoard[square] === cellColor && cellColor !== ""
-        )
+        cellColor &&
+        columnFour.every((square) => currentColorsBoard[square] === cellColor)
       ) {
         setScore((score) => score + 4);
 
@@ -65,10 +61,8 @@ function App() {
         const rowThree = [i, i + 1, i + 2];
         const cellColor = currentColorsBoard[i];
         if (
-          rowThree.every(
-            (square) =>
-              currentColorsBoard[square] === cellColor && cellColor !== ""
-          )
+          cellColor &&
+          rowThree.every((square) => currentColorsBoard[square] === cellColor)
         ) {
           setScore((score) => score + 3);
           rowThree.forEach((square) => (currentColorsBoard[square] = ""));
@@ -89,10 +83,8 @@ function App() {
         const rowFour = [i, i + 1, i + 2, i + 3];
         const cellColor = currentColorsBoard[i];
         if (
-          rowFour.every(
-            (square) =>
-              currentColorsBoard[square] === cellColor && cellColor !== ""
-          )
+          cellColor &&
+          rowFour.every((square) => currentColorsBoard[square] === cellColor)
         ) {
           setScore((score) => score + 4);
           rowFour.forEach((square) => (currentColorsBoard[square] = ""));
@@ -102,8 +94,6 @@ function App() {
       }
     }
   };
-
-  console.log(score);
 
   const moveDownCell = () => {
     const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
