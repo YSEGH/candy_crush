@@ -1,4 +1,5 @@
 import "./App.css";
+import Score from "./Score";
 import { useEffect, useState } from "react";
 
 const width = 8;
@@ -6,6 +7,7 @@ const color = ["red", "green", "yellow", "blue", "violet", "pink"];
 
 function App() {
   const [currentColorsBoard, setCurrentColorsBoard] = useState([]);
+  const [score, setScore] = useState(0);
   const [cellDragged, setCellDragged] = useState(null);
   const [cellReplaced, setCellReplaced] = useState(null);
 
@@ -23,8 +25,13 @@ function App() {
       const columnThree = [i, i + width, i + width * 2];
       const cellColor = currentColorsBoard[i];
       if (
-        columnThree.every((square) => currentColorsBoard[square] === cellColor)
+        columnThree.every(
+          (square) =>
+            currentColorsBoard[square] === cellColor && cellColor !== ""
+        )
       ) {
+        setScore((score) => score + 3);
+
         columnThree.forEach((square) => (currentColorsBoard[square] = ""));
         return true;
       }
@@ -36,8 +43,13 @@ function App() {
       const columnFour = [i, i + width, i + width * 2, i + width * 3];
       const cellColor = currentColorsBoard[i];
       if (
-        columnFour.every((square) => currentColorsBoard[square] === cellColor)
+        columnFour.every(
+          (square) =>
+            currentColorsBoard[square] === cellColor && cellColor !== ""
+        )
       ) {
+        setScore((score) => score + 4);
+
         columnFour.forEach((square) => (currentColorsBoard[square] = ""));
         return true;
       }
@@ -53,9 +65,14 @@ function App() {
         const rowThree = [i, i + 1, i + 2];
         const cellColor = currentColorsBoard[i];
         if (
-          rowThree.every((square) => currentColorsBoard[square] === cellColor)
+          rowThree.every(
+            (square) =>
+              currentColorsBoard[square] === cellColor && cellColor !== ""
+          )
         ) {
+          setScore((score) => score + 3);
           rowThree.forEach((square) => (currentColorsBoard[square] = ""));
+
           return true;
         }
       }
@@ -72,14 +89,21 @@ function App() {
         const rowFour = [i, i + 1, i + 2, i + 3];
         const cellColor = currentColorsBoard[i];
         if (
-          rowFour.every((square) => currentColorsBoard[square] === cellColor)
+          rowFour.every(
+            (square) =>
+              currentColorsBoard[square] === cellColor && cellColor !== ""
+          )
         ) {
+          setScore((score) => score + 4);
           rowFour.forEach((square) => (currentColorsBoard[square] = ""));
+
           return true;
         }
       }
     }
   };
+
+  console.log(score);
 
   const moveDownCell = () => {
     const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -123,8 +147,6 @@ function App() {
       const isRowOfFour = checkRowOfFour();
       const isRowOfThree = checkRowOfThree();
 
-      console.log(isColumnOfFour, isColumnOfThree, isRowOfFour, isRowOfThree);
-
       if (isColumnOfThree || isColumnOfFour || isRowOfThree || isRowOfFour) {
         setCellDragged(null);
         setCellReplaced(null);
@@ -144,14 +166,21 @@ function App() {
   useEffect(() => {
     const timer = setInterval(() => {
       checkColumnOfFour();
-      checkColumnOfThree();
       checkRowOfFour();
+      checkColumnOfThree();
       checkRowOfThree();
       moveDownCell();
       setCurrentColorsBoard([...currentColorsBoard]);
     }, 100);
     return () => clearInterval(timer);
-  }, [checkColumnOfThree, checkColumnOfFour, checkRowOfThree, checkRowOfFour]);
+  }, [
+    checkColumnOfThree,
+    checkColumnOfFour,
+    checkRowOfThree,
+    checkRowOfFour,
+    moveDownCell,
+    currentColorsBoard,
+  ]);
 
   return (
     <div className="App">
@@ -172,6 +201,7 @@ function App() {
           ></div>
         ))}
       </div>
+      <Score score={score} />
     </div>
   );
 }
