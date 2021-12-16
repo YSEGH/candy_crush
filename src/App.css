@@ -1,18 +1,78 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
 * {
   box-sizing: border-box;
 }
 
+img {
+  image-rendering: auto;
+  image-rendering: crisp-edges;
+  image-rendering: optimizeQuality;
+}
+
+.App {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-size: cover;
+}
+
 .board {
   margin: auto;
-  width: 608px;
-  height: 608px;
+  width: 624px;
+  height: 624px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+  background-color: #516b88ee;
+  padding: 2rem;
+  border-radius: 30px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+    rgba(0, 0, 0, 0.22) 0px 15px 12px;
 }
 
 .cell {
   padding: 3px;
   width: 70px;
   height: 70px;
+  transition: 0.25s transform;
+  animation: rotateCandy 1.75s infinite;
+}
+.cell:hover {
+  animation: none;
+  transform: scale(1.1);
+}
+.score {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+}
+.score h2,
+.score h1 {
+  color: #fff;
+  font-family: "Source Sans 3", sans-serif;
+  margin: 0;
+}
+.score h1 {
+  font-size: 50px;
+}
+
+@keyframes rotateCandy {
+  0% {
+    transform-origin: center;
+    transform: rotateZ(-5deg);
+  }
+  50% {
+    transform-origin: center;
+    transform: rotateZ(5deg);
+  }
+  100% {
+    transform: rotateZ(-5deg);
+  }
 }

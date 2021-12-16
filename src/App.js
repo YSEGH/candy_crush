@@ -1,9 +1,24 @@
+import { useEffect, useState } from "react";
 import "./App.css";
 import Score from "./Score";
-import { useEffect, useState } from "react";
+import BgCandyCrush from "./images/bg-candycrush.jpeg";
+import BlueCandy from "./images/blue-candy.png";
+import OrangeCandy from "./images/orange-candy.png";
+import GreenCandy from "./images/green-candy.png";
+import PurpleCandy from "./images/purple-candy.png";
+import RedCandy from "./images/red-candy.png";
+import YellowCandy from "./images/yellow-candy.png";
+import Blank from "./images/blank.png";
 
 const width = 8;
-const color = ["red", "green", "yellow", "blue", "violet", "pink"];
+const color = [
+  BlueCandy,
+  OrangeCandy,
+  GreenCandy,
+  PurpleCandy,
+  RedCandy,
+  YellowCandy,
+];
 
 function App() {
   const [currentColorsBoard, setCurrentColorsBoard] = useState([]);
@@ -24,13 +39,14 @@ function App() {
     for (let i = 0; i <= 47; i++) {
       const columnThree = [i, i + width, i + width * 2];
       const cellColor = currentColorsBoard[i];
+      const isCellColor = cellColor !== Blank;
       if (
-        cellColor &&
+        isCellColor &&
         columnThree.every((square) => currentColorsBoard[square] === cellColor)
       ) {
         setScore((score) => score + 3);
 
-        columnThree.forEach((square) => (currentColorsBoard[square] = ""));
+        columnThree.forEach((square) => (currentColorsBoard[square] = Blank));
         return true;
       }
     }
@@ -40,13 +56,15 @@ function App() {
     for (let i = 0; i <= 39; i++) {
       const columnFour = [i, i + width, i + width * 2, i + width * 3];
       const cellColor = currentColorsBoard[i];
+      const isCellColor = cellColor !== Blank;
+
       if (
-        cellColor &&
+        isCellColor &&
         columnFour.every((square) => currentColorsBoard[square] === cellColor)
       ) {
         setScore((score) => score + 4);
 
-        columnFour.forEach((square) => (currentColorsBoard[square] = ""));
+        columnFour.forEach((square) => (currentColorsBoard[square] = Blank));
         return true;
       }
     }
@@ -60,12 +78,14 @@ function App() {
       if (!invalidCell.includes(i)) {
         const rowThree = [i, i + 1, i + 2];
         const cellColor = currentColorsBoard[i];
+        const isCellColor = cellColor !== Blank;
+
         if (
-          cellColor &&
+          isCellColor &&
           rowThree.every((square) => currentColorsBoard[square] === cellColor)
         ) {
           setScore((score) => score + 3);
-          rowThree.forEach((square) => (currentColorsBoard[square] = ""));
+          rowThree.forEach((square) => (currentColorsBoard[square] = Blank));
 
           return true;
         }
@@ -82,12 +102,14 @@ function App() {
       if (!invalidCell.includes(i)) {
         const rowFour = [i, i + 1, i + 2, i + 3];
         const cellColor = currentColorsBoard[i];
+        const isCellColor = cellColor !== Blank;
+
         if (
-          cellColor &&
+          isCellColor &&
           rowFour.every((square) => currentColorsBoard[square] === cellColor)
         ) {
           setScore((score) => score + 4);
-          rowFour.forEach((square) => (currentColorsBoard[square] = ""));
+          rowFour.forEach((square) => (currentColorsBoard[square] = Blank));
 
           return true;
         }
@@ -98,13 +120,13 @@ function App() {
   const moveDownCell = () => {
     const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
     for (let i = 0; i < 64 - width; i++) {
-      if (firstRow.includes(i) && currentColorsBoard[i] === "") {
+      if (firstRow.includes(i) && currentColorsBoard[i] === Blank) {
         currentColorsBoard[i] = color[Math.floor(Math.random() * color.length)];
       }
 
-      if (currentColorsBoard[i + width] === "") {
+      if (currentColorsBoard[i + width] === Blank) {
         currentColorsBoard[i + width] = currentColorsBoard[i];
-        currentColorsBoard[i] = "";
+        currentColorsBoard[i] = Blank;
       }
     }
   };
@@ -129,8 +151,8 @@ function App() {
     const isValidMove = validMove.includes(cellReplacedId);
 
     if (isValidMove) {
-      currentColorsBoard[cellDraggedId] = cellReplaced.style.backgroundColor;
-      currentColorsBoard[cellReplacedId] = cellDragged.style.backgroundColor;
+      currentColorsBoard[cellDraggedId] = cellReplaced.getAttribute("src");
+      currentColorsBoard[cellReplacedId] = cellDragged.getAttribute("src");
 
       const isColumnOfFour = checkColumnOfFour();
       const isColumnOfThree = checkColumnOfThree();
@@ -141,8 +163,8 @@ function App() {
         setCellDragged(null);
         setCellReplaced(null);
       } else {
-        currentColorsBoard[cellReplacedId] = cellReplaced.style.backgroundColor;
-        currentColorsBoard[cellDraggedId] = cellDragged.style.backgroundColor;
+        currentColorsBoard[cellReplacedId] = cellReplaced.getAttribute("src");
+        currentColorsBoard[cellDraggedId] = cellDragged.getAttribute("src");
         setCurrentColorsBoard([...currentColorsBoard]);
       }
     }
@@ -173,13 +195,14 @@ function App() {
   ]);
 
   return (
-    <div className="App">
+    <div className="App" style={{ backgroundImage: `url(${BgCandyCrush})` }}>
       <div className="board">
         {currentColorsBoard.map((cellColor, i) => (
-          <div
+          <img
             key={i}
             className="cell"
-            style={{ backgroundColor: cellColor, cursor: "pointer" }}
+            src={cellColor}
+            style={{ cursor: "pointer" }}
             data-id={i}
             draggable={true}
             onDragStart={(e) => onDragStartHandler(e.target)}
@@ -188,7 +211,7 @@ function App() {
             onDragLeave={(e) => e.preventDefault()}
             onDrop={(e) => onDropHandler(e.target)}
             onDragEnd={(e) => onDragEndHandler(e.target)}
-          ></div>
+          />
         ))}
       </div>
       <Score score={score} />
