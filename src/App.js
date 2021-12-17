@@ -26,6 +26,9 @@ function App() {
   const [cellDragged, setCellDragged] = useState(null);
   const [cellReplaced, setCellReplaced] = useState(null);
 
+  /**
+   * Function qui créé le tableau
+   */
   const createBoard = () => {
     const colorArray = [];
     for (let i = 0; i < width * width; i++) {
@@ -35,6 +38,10 @@ function App() {
     setCurrentColorsBoard([...colorArray]);
   };
 
+  /**
+   * Fonction qui vérifie la présence d'une colone de 3 cases similaires
+   * @returns
+   */
   const checkColumnOfThree = () => {
     for (let i = 0; i <= 47; i++) {
       const columnThree = [i, i + width, i + width * 2];
@@ -52,6 +59,10 @@ function App() {
     }
   };
 
+  /**
+   * Fonction qui vérifie la présence d'une colone de 4 cases similaires
+   * @returns
+   */
   const checkColumnOfFour = () => {
     for (let i = 0; i <= 39; i++) {
       const columnFour = [i, i + width, i + width * 2, i + width * 3];
@@ -70,6 +81,10 @@ function App() {
     }
   };
 
+  /**
+   * Fonction qui vérifie la présence d'une ligne de 3 cases similaires
+   * @returns
+   */
   const checkRowOfThree = () => {
     const invalidCell = [
       6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55, 62, 63,
@@ -93,6 +108,10 @@ function App() {
     }
   };
 
+  /**
+   * Fonction qui vérifie la présence d'une ligne de 4 cases similaires
+   * @returns
+   */
   const checkRowOfFour = () => {
     const invalidCell = [
       5, 6, 7, 13, 14, 15, 21, 22, 23, 29, 30, 31, 37, 38, 39, 45, 46, 47, 53,
@@ -117,6 +136,10 @@ function App() {
     }
   };
 
+  /**
+   * Fonction qui élimine les cases vides
+   * @returns
+   */
   const moveDownCell = () => {
     const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
     for (let i = 0; i < 64 - width; i++) {
@@ -131,12 +154,24 @@ function App() {
     }
   };
 
+  /**
+   * Fonction qui définit la case qui va être déplacée
+   * @param {HTMLElement} target
+   */
   const onDragStartHandler = (target) => {
     setCellDragged(target);
   };
+  /**
+   * Fonction qui définit la case qui va être remplacée
+   * @param {HTMLElement} target
+   */
   const onDropHandler = (target) => {
     setCellReplaced(target);
   };
+  /**
+   * Fonction qui vérifie la possibilité de déplacer la case et qui va ensuite interchanger les cases
+   * @returns
+   */
   const onDragEndHandler = () => {
     const cellDraggedId = parseInt(cellDragged.getAttribute("data-id"));
     const cellReplacedId = parseInt(cellReplaced.getAttribute("data-id"));
